@@ -1,4 +1,4 @@
-import { findParent, findAllParents, getItem } from '../src/index';
+import { findParent, findAllParents, getItem, setItem } from '../src/index';
 import dataWithChildren from './data-with-children';
 import dataWithMembers from './data-with-members';
 
@@ -34,6 +34,19 @@ describe('Tree Data Utils', function () {
                 expectedId = '5a420413b9f7cf39d817a065';
             it(`${searchId} id must have item with ${expectedId} id`, function () {
                 testGetItem(dataWithChildren, searchId, expectedId);
+            });
+        });
+    });
+
+    describe("#setting-item-of-a-tree", function () {
+        describe("#with-default-configuration", function () {
+            let searchId = '5a4204133f4351dbe7bd99d6';
+            let newNode = {
+                id: searchId,
+                name: 'istanbul'
+            };
+            it(`${searchId} name must have item with name ${newNode.name}`, function () {
+                testSetItem(dataWithChildren, newNode, searchId);
             });
         });
     });
@@ -89,6 +102,20 @@ const testGetItem = (data, searchId, expectedId, config = {}) => {
         .to
         .have
         .property('id', expectedId);
+}
+
+const testSetItem = (data, newNode, searchId, config = {}) => {
+    let node = {
+        id: searchId
+    }
+    let item = setItem(data, node, newNode, (item, node) => {
+        return item.id === node.id
+    }, config);
+
+    expect(item)
+        .to
+        .have
+        .property('name', newNode.name);
 }
 
 const testFindAllParents = (data, searchId, parents, config = {}) => {

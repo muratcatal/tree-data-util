@@ -46,7 +46,7 @@ export const findAllParents = (data, node, predicate, options = {}) => {
 export const getItem = (data, node, predicate, options = {}) => {
     let config = Object.assign({}, defaults, options);
 
-    let result =  data.find(c => predicate(c, node));
+    let result = data.find(c => predicate(c, node));
     if (result) {
         return result;
     }
@@ -56,6 +56,28 @@ export const getItem = (data, node, predicate, options = {}) => {
         if (item[config.props.children] && item[config.props.children].length > 0) {
             result = getItem(item[config.props.children], node, predicate, config);
             if (result) {
+                return result;
+            }
+        }
+    }
+    return result;
+}
+
+export const setItem = (data, node, newNode, predicate, options = {}) => {
+    let config = Object.assign({}, defaults, options);
+
+    let result = data.find(c => predicate(c, node));
+    if (result) {
+        result = newNode;
+        return result;
+    }
+    for (let i = 0; i < data.length; i++) {
+        let item = data[i];
+
+        if (item[config.props.children] && item[config.props.children].length > 0) {
+            result = getItem(item[config.props.children], node, predicate, config);
+            if (result) {
+                result = newNode;
                 return result;
             }
         }
