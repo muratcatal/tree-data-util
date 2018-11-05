@@ -9,9 +9,9 @@ export const findParent = (data, node, predicate, options = {}) => {
 
     let parent = undefined;
     for (let i = 0; i < data.length; i++) {
-        if (parent) 
+        if (parent)
             return parent;
-        
+
         let item = data[i];
 
         if (item[config.props.children] && item[config.props.children].length > 0) {
@@ -41,4 +41,24 @@ export const findAllParents = (data, node, predicate, options = {}) => {
         parent = findParent(data, parent, predicate, config);
     }
     return allParents;
+}
+
+export const getItem = (data, node, predicate, options = {}) => {
+    let config = Object.assign({}, defaults, options);
+
+    let result =  data.find(c => predicate(c, node));
+    if (result) {
+        return result;
+    }
+    for (let i = 0; i < data.length; i++) {
+        let item = data[i];
+
+        if (item[config.props.children] && item[config.props.children].length > 0) {
+            result = getItem(item[config.props.children], node, predicate, config);
+            if (result) {
+                return result;
+            }
+        }
+    }
+    return result;
 }

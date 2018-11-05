@@ -1,4 +1,4 @@
-import {findParent, findAllParents} from '../src/index';
+import { findParent, findAllParents, getItem } from '../src/index';
 import dataWithChildren from './data-with-children';
 import dataWithMembers from './data-with-members';
 
@@ -28,6 +28,16 @@ describe('Tree Data Utils', function () {
         });
     });
 
+    describe("#finding-item-of-a-tree", function () {
+        describe("#with-default-configuration", function () {
+            let searchId = '5a420413b9f7cf39d817a065',
+                expectedId = '5a420413b9f7cf39d817a065';
+            it(`${searchId} id must have item with ${expectedId} id`, function () {
+                testGetItem(dataWithChildren, searchId, expectedId);
+            });
+        });
+    });
+
     describe("#finding-all-parents-of-a-node", function () {
 
         describe("#with-default-configuration", function () {
@@ -42,7 +52,7 @@ describe('Tree Data Utils', function () {
             let searchId = '5a4221b22d5a530a827666b2',
                 expectedParents = ["5a4221b2694a71a24a922f69", "5a4221b2d4b83eab22bef405", "5a4221b215d18da5383eb98d"];
             it(`id of ${searchId} must have parents with id ${expectedParents}`, function () {
-                testFindAllParents(dataWithMembers, searchId, expectedParents,{
+                testFindAllParents(dataWithMembers, searchId, expectedParents, {
                     props: {
                         children: "members"
                     }
@@ -67,13 +77,27 @@ const testFindParent = (data, searchId, expectedParentId, config = {}) => {
         .property('id', expectedParentId);
 }
 
-const testFindAllParents = (data, searchId, parents,config = {}) => {
+const testGetItem = (data, searchId, expectedId, config = {}) => {
+    let node = {
+        id: searchId
+    }
+    let item = getItem(data, node, (item, node) => {
+        return item.id === node.id
+    }, config);
+
+    expect(item)
+        .to
+        .have
+        .property('id', expectedId);
+}
+
+const testFindAllParents = (data, searchId, parents, config = {}) => {
     let node = {
         id: searchId
     }
     let result = findAllParents(data, node, (item, node) => {
         return item.id === node.id
-    },config);
+    }, config);
 
     result = result.map((item) => item.id);
 
